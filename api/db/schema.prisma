@@ -11,8 +11,66 @@ generator client {
 // Define your own datamodels here and run `yarn redwood prisma migrate dev`
 // to create migrations for them and apply to your dev DB.
 // TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model ItemCategory {
+  id          Int             @id @default(autoincrement())
+  name        String
+  created_by  String          @default("Luis Perez")
+  created_on  DateTime        @default(now())
+  modified_by String          @default("Luis Perez")
+  modified_on DateTime        @default(now())
+  items       InventoryItem[]
+}
+
+model InventoryItem {
+  id                Int             @id @default(autoincrement())
+  name              String
+  size              String?
+  current_amount    Int
+  low_amount        Int
+  sufficient_amount Int
+  issued_by         String          @default("Luis Perez")
+  created_by        String          @default("Luis Perez")
+  created_on        DateTime        @default(now())
+  modified_by       String          @default("Luis Perez")
+  modified_on       DateTime        @default(now())
+  categories        ItemCategory[]
+  template          IssueTemplate[]
+  User              User            @relation(fields: [user_id], references: [id])
+  user_id           Int             @default(1)
+  // NSN     String
+  // qr_code String
+  // notes   String?
+  // cost    Int
+}
+
+model IssueTemplate {
+  id            Int             @id @default(autoincrement())
+  enlisted      Boolean
+  created_by    String          @default("Luis Perez")
+  created_on    DateTime        @default(now())
+  modified_by   String          @default("Luis Perez")
+  modified_on   DateTime        @default(now())
+  items_issuing InventoryItem[]
+  User          User[]
+}
+
+model User {
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  password        String          @default("3737HSHS")
+  salt            String
+  hash            String
+  hashedPassword  String
+  name            String
+  enlisted        Boolean
+  roles           String          @default("user")
+  created_by      String          @default("Luis Perez")
+  created_on      DateTime        @default(now())
+  modified_by     String          @default("Luis Perez")
+  modified_on     DateTime        @default(now())
+  items           InventoryItem[]
+  item_template   IssueTemplate   @relation(fields: [issueTemplateId], references: [id])
+  issueTemplateId Int
+  // top_size    String
+  // bottom_size String
 }
